@@ -1,0 +1,13 @@
+{
+  "name": "Strix — StreetWise",
+  "short_name": "Strix",
+  "description": "Real-time civic issue reporting and construction hazard awareness.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F1F3EF",
+  "theme_color": "#171A1E",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/owl-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

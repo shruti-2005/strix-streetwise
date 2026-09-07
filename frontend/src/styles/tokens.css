@@ -1,0 +1,222 @@
+/* ===========================================================
+   Strix design tokens
+   Palette drawn from civic infrastructure: asphalt, safety
+   signage orange, municipal signage blue, and status colors
+   that match real-world road/utility marking conventions.
+   =========================================================== */
+:root {
+  /* Surfaces */
+  --color-bg: #F1F3EF;
+  --color-surface: #FFFFFF;
+  --color-surface-sunken: #E8EAE5;
+  --color-border: #D8DCD4;
+  --color-border-strong: #B7BDB2;
+
+  /* Ink */
+  --color-ink: #171A1E;
+  --color-ink-soft: #4B5057;
+  --color-ink-faint: #7C828A;
+  --color-on-dark: #F3F4F1;
+
+  /* Brand */
+  --color-accent: #E8730A;       /* safety-orange: reporting / primary CTA */
+  --color-accent-dark: #B4590A;
+  --color-accent-tint: #FDEBDB;
+  --color-authority: #1C5F8C;    /* municipal blue: authority-facing surfaces */
+  --color-authority-dark: #123F5C;
+  --color-authority-tint: #DDEAF3;
+
+  /* Status */
+  --color-pending: #C98A1B;
+  --color-pending-tint: #FBF0DA;
+  --color-progress: #2461A8;
+  --color-progress-tint: #DEEAF6;
+  --color-resolved: #2F7D4F;
+  --color-resolved-tint: #DFF0E6;
+  --color-rejected: #B23B3B;
+  --color-rejected-tint: #F8E1E1;
+  --color-hazard: #C1272D;
+  --color-hazard-tint: #FBDEDD;
+
+  /* Type */
+  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* Scale */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --shadow-1: 0 1px 2px rgba(23, 26, 30, 0.06);
+  --shadow-2: 0 4px 16px rgba(23, 26, 30, 0.10);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+a { color: inherit; }
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-authority);
+  outline-offset: 2px;
+}
+
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
+  line-height: 1;
+}
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+.btn-primary { background: var(--color-accent); color: white; }
+.btn-primary:hover:not(:disabled) { background: var(--color-accent-dark); }
+
+.btn-authority { background: var(--color-authority); color: white; }
+.btn-authority:hover:not(:disabled) { background: var(--color-authority-dark); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-ink);
+  border-color: var(--color-border-strong);
+}
+.btn-outline:hover:not(:disabled) { border-color: var(--color-ink); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-ink-soft);
+  padding: 8px 10px;
+}
+.btn-ghost:hover:not(:disabled) { color: var(--color-ink); }
+
+.btn-sm { padding: 6px 12px; font-size: 0.82rem; }
+.btn-block { width: 100%; }
+
+/* ---------- Inputs ---------- */
+.field { display: flex; flex-direction: column; gap: var(--space-1); margin-bottom: var(--space-4); }
+.field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+}
+.field input,
+.field select,
+.field textarea {
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--color-authority);
+}
+.field .hint { font-size: 0.76rem; color: var(--color-ink-faint); }
+.field .error { font-size: 0.78rem; color: var(--color-rejected); }
+
+/* ---------- Cards (flat, status-striped, no shadow soup) ---------- */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.card-strip {
+  border-left: 4px solid var(--color-border-strong);
+}
+.card-strip.status-pending { border-left-color: var(--color-pending); }
+.card-strip.status-in_progress { border-left-color: var(--color-progress); }
+.card-strip.status-resolved { border-left-color: var(--color-resolved); }
+.card-strip.status-rejected { border-left-color: var(--color-rejected); }
+
+/* ---------- Status badge ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.badge-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+.badge.status-pending { background: var(--color-pending-tint); color: var(--color-pending); }
+.badge.status-pending .badge-dot { background: var(--color-pending); }
+
+.badge.status-in_progress { background: var(--color-progress-tint); color: var(--color-progress); }
+.badge.status-in_progress .badge-dot { background: var(--color-progress); }
+
+.badge.status-resolved { background: var(--color-resolved-tint); color: var(--color-resolved); }
+.badge.status-resolved .badge-dot { background: var(--color-resolved); }
+
+.badge.status-rejected { background: var(--color-rejected-tint); color: var(--color-rejected); }
+.badge.status-rejected .badge-dot { background: var(--color-rejected); }
+
+.badge.priority-critical { background: var(--color-hazard-tint); color: var(--color-hazard); }
+.badge.priority-high { background: var(--color-accent-tint); color: var(--color-accent-dark); }
+.badge.priority-medium { background: var(--color-surface-sunken); color: var(--color-ink-soft); }
+.badge.priority-low { background: var(--color-surface-sunken); color: var(--color-ink-faint); }
+
+/* ---------- Utility ---------- */
+.text-soft { color: var(--color-ink-soft); }
+.text-faint { color: var(--color-ink-faint); }
+.mt-0 { margin-top: 0; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }

@@ -1,0 +1,14 @@
+.hazard-banner {
+  background: var(--color-hazard-tint);
+  border-bottom: 1px solid rgba(193, 39, 45, 0.25);
+}
+.hazard-banner-row {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hazard-banner-icon { font-size: 1rem; }
+.hazard-banner-text { flex: 1; font-size: 0.85rem; color: #7A1D22; }

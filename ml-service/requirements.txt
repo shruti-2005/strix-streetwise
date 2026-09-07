@@ -1,0 +1,10 @@
+# Core service (required to run app.py in mock mode)
+flask==3.0.3
+flask-cors==4.0.1
+pillow==10.4.0
+numpy==1.26.4
+python-dotenv==1.0.1
+
+# Required only once you train/load a real CNN (model/train.py, or app.py
+# in "model" mode). Not needed for mock-mode development.
+tensorflow==2.16.1

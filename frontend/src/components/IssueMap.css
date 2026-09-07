@@ -1,0 +1,28 @@
+.issue-map-wrap { position: relative; }
+
+.strix-marker-pin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  background: var(--pin-color, #4B5057);
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.35);
+  border: 2px solid white;
+}
+.strix-marker-pin { font-size: 14px; }
+.strix-marker-pin > * { transform: rotate(45deg); }
+
+.strix-user-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #1C5F8C;
+  border: 3px solid white;
+  box-shadow: 0 0 0 2px #1C5F8C, 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.map-popup { font-family: var(--font-body); min-width: 160px; }
+.map-popup p { margin: 4px 0 8px; font-size: 0.85rem; color: var(--color-ink-soft); }

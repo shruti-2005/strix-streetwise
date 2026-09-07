@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+backend/uploads/*
+!backend/uploads/.gitkeep
+ml-service/model/strix_cnn.h5
+ml-service/data/
+__pycache__/
+*.pyc
