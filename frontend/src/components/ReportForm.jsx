@@ -164,7 +164,6 @@ export default function ReportForm() {
       {result && (
         <div className="report-alert report-alert-success">
           Report submitted. CNN match confidence: {Math.round((result.validation?.confidence || 0) * 100)}%
-          {result.validation?.mode === "mock" && " (demo mode - no trained model loaded yet)"}
         </div>
       )}
 

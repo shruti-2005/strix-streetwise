@@ -7,6 +7,10 @@ export const api = axios.create({ baseURL: `${API_BASE_URL}/api` });
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("strix_token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (config.method?.toLowerCase() === "get") {
+    config.headers["Cache-Control"] = "no-cache";
+    config.headers.Pragma = "no-cache";
+  }
   return config;
 });
 
@@ -30,6 +34,7 @@ export const issuesApi = {
   create: (formData) =>
     api.post("/issues", formData, { headers: { "Content-Type": "multipart/form-data" } }),
   upvote: (id) => api.post(`/issues/${id}/upvote`),
+  dashboard: () => api.get("/issues/dashboard"),
 };
 
 // ---------- Authority ----------

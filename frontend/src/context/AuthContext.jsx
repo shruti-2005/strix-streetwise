@@ -3,15 +3,6 @@ import { authApi } from "../api/api";
 
 const AuthContext = createContext(null);
 
-function getOrCreateDeviceId() {
-  let id = localStorage.getItem("strix_device_id");
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem("strix_device_id", id);
-  }
-  return id;
-}
-
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,25 +17,19 @@ export function AuthProvider({ children }) {
     setLoading(true);
     setError(null);
     const token = localStorage.getItem("strix_token");
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
     try {
-      if (token) {
-        const { data } = await authApi.me();
-        setUser(data.user);
-      } else {
-        const deviceId = getOrCreateDeviceId();
-        const { data } = await authApi.anonymous(deviceId);
-        persistSession(data.token, data.user);
-      }
-    } catch (err) {
-      // Stale/invalid token - fall back to a fresh anonymous session
+      const { data } = await authApi.me();
+      setUser(data.user);
+    } catch {
+      // A stale or invalid session should take the user back to sign-in.
       localStorage.removeItem("strix_token");
-      try {
-        const deviceId = getOrCreateDeviceId();
-        const { data } = await authApi.anonymous(deviceId);
-        persistSession(data.token, data.user);
-      } catch (innerErr) {
-        setError("Could not reach Strix backend. Is it running on the expected port?");
-      }
+      setUser(null);
+      setError("Your session has expired. Please sign in again.");
     } finally {
       setLoading(false);
     }
@@ -54,8 +39,8 @@ export function AuthProvider({ children }) {
     bootstrap();
   }, [bootstrap]);
 
-  const login = async (email, password) => {
-    const { data } = await authApi.login({ email, password });
+  const login = async (email, password, portal = "citizen") => {
+    const { data } = await authApi.login({ email, password, portal });
     persistSession(data.token, data.user);
     return data.user;
   };
@@ -69,7 +54,6 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     localStorage.removeItem("strix_token");
     setUser(null);
-    await bootstrap(); // drops back to a fresh anonymous session
   };
 
   const updateWatchedLocality = async (watchedLocality) => {

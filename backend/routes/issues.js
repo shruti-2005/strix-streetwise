@@ -7,6 +7,7 @@ const {
   getMyIssues,
   getIssueById,
   upvoteIssue,
+  getDashboardStats,
 } = require("../controllers/issueController");
 const { protect } = require("../middleware/auth");
 const upload = require("../utils/upload");
@@ -14,6 +15,7 @@ const upload = require("../utils/upload");
 router.get("/", getIssues); // public - live map
 router.get("/nearby", getNearbyIssues); // public - geo-fenced hazard alerts
 router.get("/mine", protect, getMyIssues);
+router.get("/dashboard", protect, getDashboardStats);
 router.get("/:id", getIssueById);
 
 router.post("/", protect, upload.single("image"), createIssue);

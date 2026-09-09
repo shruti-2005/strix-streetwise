@@ -77,12 +77,16 @@ const register = asyncHandler(async (req, res) => {
 
 // @route POST /api/auth/login
 const login = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, portal } = req.body;
   const user = await User.findOne({ email }).select("+password");
 
   if (!user || !(await user.comparePassword(password))) {
     res.status(401);
     throw new Error("Invalid email or password");
+  }
+  if (portal === "admin" && !["authority", "admin"].includes(user.role)) {
+    res.status(403);
+    throw new Error("This account does not have municipal admin access");
   }
 
   const token = signToken(user);

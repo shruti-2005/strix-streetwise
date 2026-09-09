@@ -1,44 +1,56 @@
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./Navbar.css";
 
 export default function Navbar() {
-  const { user, isAuthority } = useAuth();
+  const { user, isAuthority, logout } = useAuth();
+  const navigate = useNavigate();
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const handleLogout = async () => {
+    await logout();
+    setAccountMenuOpen(false);
+    navigate("/", { replace: true });
+  };
 
   return (
     <header className="nav">
       <div className="nav-inner container">
-        <NavLink to="/" className="nav-brand">
+        <NavLink to={user ? "/dashboard" : "/"} className="nav-brand">
           <OwlMark />
           <span>
-            Strix<span className="text-faint nav-brand-sub"> / StreetWise</span>
+            <b>STRIX</b><small>StreetWise Civic Intelligence</small>
           </span>
         </NavLink>
 
         <nav className="nav-links">
-          <NavLink to="/" end className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-            Map
-          </NavLink>
-          <NavLink to="/report" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-            Report Issue
-          </NavLink>
-          <NavLink to="/my-reports" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-            My Reports
-          </NavLink>
-          {isAuthority && (
-            <NavLink to="/authority" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-              Authority Dashboard
-            </NavLink>
-          )}
+          {user && <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>Dashboard</NavLink>}
+          <NavLink to="/live-map" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>Live Map</NavLink>
+          <NavLink to="/my-reports" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>My Reports</NavLink>
+          {isAuthority && <NavLink to="/admin" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>Admin Panel</NavLink>}
         </nav>
 
         <div className="nav-user">
-          {user?.isAnonymous ? (
-            <NavLink to="/login" className="btn btn-outline btn-sm">
-              Sign in
-            </NavLink>
-          ) : (
-            <span className="nav-user-name">{user?.name}</span>
+          <NavLink to="/report" className="nav-report"><span>⊕</span> Report issue</NavLink>
+          <span className="nav-bell" aria-label="Notifications">♧</span>
+          {!user ? <NavLink to="/" className="nav-signin">Sign in</NavLink> : (
+            <div className="account-menu">
+              <button
+                className="nav-avatar"
+                onClick={() => setAccountMenuOpen((open) => !open)}
+                title="Account menu"
+                aria-label="Open account menu"
+                aria-expanded={accountMenuOpen}
+              >
+                {user?.name?.[0] || "●"}
+              </button>
+              {accountMenuOpen && (
+                <div className="account-menu-popover">
+                  <span className="account-menu-name">{user?.name || "Signed in user"}</span>
+                  <button type="button" onClick={handleLogout}>Log out</button>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>

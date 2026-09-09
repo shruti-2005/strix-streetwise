@@ -1,7 +1,7 @@
 # Strix / StreetWise
 
-Real-time civic issue reporting and construction-hazard awareness platform.
-MERN stack + a separate Flask/TensorFlow ML microservice for CNN image validation.
+STRIX is a civic issue reporting platform for citizens and municipal authorities.
+It combines a React client, Express/MongoDB API, Socket.io live updates, and a Flask ML service for image validation.
 
 ```
 strix/
@@ -12,8 +12,8 @@ strix/
 
 ## What's built
 
-- **Citizen flow**: anonymous (no signup) or registered login → report an issue with photo + GPS + description → CNN validates the photo matches the selected category → live map + status tracking (pending → in progress → resolved).
-- **Authority flow**: dashboard queue → verify/prioritize → assign → resolve, plus aggregate analytics.
+- **Citizen flow**: sign in → report an issue with a photo, location, and description → view updates on the live map and dashboard.
+- **Authority flow**: dashboard queue → verify and prioritise → assign → resolve, plus aggregate analytics.
 - **Construction hazard awareness**: geo-fenced alerts warn nearby citizens in real time via Socket.io.
 - **ML validation**: runs against a real trained CNN once you provide one, and transparently falls back to a mock validator so the rest of the app works with zero setup.
 
@@ -29,18 +29,11 @@ strix/
 
 ```bash
 cd backend
-cp .env.example .env      # edit MONGO_URI / JWT_SECRET if needed
+cp .env.example .env      # configure your local database connection and app settings
 npm install
-npm run seed               # optional: creates demo authority + citizen accounts and sample issues
+npm run seed               # optional: adds local sample data
 npm run dev                 # starts on http://localhost:5000
 ```
-
-Demo accounts created by `npm run seed`:
-| Role                | Email                             | Password    |
-|---------------------|------------------------------------|-------------|
-| Authority (Roads)   | roads.authority@strix.demo         | password123 |
-| Authority (Sanitation) | sanitation.authority@strix.demo | password123 |
-| Citizen             | citizen@strix.demo                 | password123 |
 
 ## 3. Run the ML microservice
 
@@ -62,9 +55,8 @@ npm install
 npm run dev                  # starts on http://localhost:5173
 ```
 
-Open http://localhost:5173. You'll be dropped into an anonymous session immediately — report an
-issue, watch it appear on the live map, then sign in with a demo authority account (`/login`) to
-see it in the Authority Dashboard.
+Open http://localhost:5173, create an account or sign in, then report an issue or explore the live map.
+Authority users can access the admin dashboard after signing in.
 
 ---
 

@@ -6,6 +6,7 @@ import { categoryMeta, CATEGORIES, PRIORITY_LABELS } from "../api/categories";
 import StatusBadge from "../components/StatusBadge";
 import PriorityBadge from "../components/PriorityBadge";
 import { UPLOADS_BASE_URL } from "../api/api";
+import { Link } from "react-router-dom";
 import "./AuthorityDashboard.css";
 
 const STATUS_OPTIONS = ["pending", "in_progress", "resolved", "rejected"];
@@ -14,7 +15,7 @@ const PRIORITY_OPTIONS = ["low", "medium", "high", "critical"];
 export default function AuthorityDashboard() {
   const { user } = useAuth();
   const [issues, setIssues] = useState([]);
-  const [analytics, setAnalytics] = useState(null);
+  const [totalReports, setTotalReports] = useState(0);
   const [statusFilter, setStatusFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [loading, setLoading] = useState(true);
@@ -29,13 +30,15 @@ export default function AuthorityDashboard() {
 
   useEffect(loadQueue, [loadQueue]);
 
-  useEffect(() => {
-    authorityApi.analytics().then(({ data }) => setAnalytics(data));
-  }, [issues.length]);
+  const loadTotal = useCallback(() => {
+    authorityApi.analytics().then(({ data }) => setTotalReports(data.totalIssues)).catch(() => setTotalReports(0));
+  }, []);
+
+  useEffect(loadTotal, [loadTotal]);
 
   useEffect(() => {
     socket.emit("join_authority_room");
-    const onNew = () => loadQueue();
+    const onNew = () => { loadQueue(); loadTotal(); };
     const onUpdate = (updated) =>
       setIssues((prev) => prev.map((i) => (i._id === updated._id ? { ...i, ...updated } : i)));
     socket.on("authority:new_issue", onNew);
@@ -44,7 +47,7 @@ export default function AuthorityDashboard() {
       socket.off("authority:new_issue", onNew);
       socket.off("issue:status_update", onUpdate);
     };
-  }, [loadQueue]);
+  }, [loadQueue, loadTotal]);
 
   const setPriority = async (issue, priority) => {
     const { data } = await authorityApi.verify(issue._id, { priority });
@@ -64,27 +67,13 @@ export default function AuthorityDashboard() {
     setIssues((prev) => prev.map((i) => (i._id === issue._id ? data.issue : i)));
   };
 
-  return (
-    <div className="container" style={{ paddingTop: 28, paddingBottom: 48 }}>
-      <h1 style={{ fontSize: "1.6rem", marginBottom: 4 }}>Authority dashboard</h1>
-      <p className="text-soft" style={{ marginTop: 0 }}>
+  return (<main className="authority-shell"><AuthoritySidebar /> <section className="authority-content">
+      <div id="overview" className="authority-section-anchor" />
+      <div className="eyebrow">Municipal command / operations portal · ● Live updates active</div><h1 className="page-title">{user?.role === "admin" ? "Admin Control Panel" : "Authority Dashboard"}</h1><p className="page-subtitle">
         Verify, prioritize, assign, and resolve incoming civic reports.
       </p>
 
-      {analytics && (
-        <div className="analytics-strip">
-          <div className="analytics-card">
-            <span className="analytics-num">{analytics.totalIssues}</span>
-            <span className="text-faint">Total issues</span>
-          </div>
-          {analytics.byStatus.map((s) => (
-            <div className="analytics-card" key={s._id}>
-              <span className="analytics-num">{s.count}</span>
-              <span className="text-faint">{s._id.replace("_", " ")}</span>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="authority-cards"><Metric label="Total Reports" value={totalReports}/></div>
 
       <div className="flex gap-3" style={{ margin: "20px 0" }}>
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
@@ -103,7 +92,7 @@ export default function AuthorityDashboard() {
 
       {loading && <p className="text-faint">Loading queue…</p>}
 
-      <div className="flex flex-col gap-3">
+      <div id="reports-queue" className="queue-panel">
         {issues.map((issue) => (
           <QueueRow
             key={issue._id}
@@ -115,9 +104,12 @@ export default function AuthorityDashboard() {
         ))}
         {!loading && issues.length === 0 && <p className="text-faint">No issues match this filter.</p>}
       </div>
-    </div>
+    </section></main>
   );
 }
+
+function AuthoritySidebar(){ return <aside className="authority-side"><h2>◉ STRIX</h2><div className="eyebrow" style={{color:"#55d9ce",margin:"14px 10px"}}>Municipal command</div><a href="#overview" className="active">▦ Overview</a><a href="#reports-queue">▣ Reports queue</a><Link to="/live-map">▤ Live Map</Link></aside> }
+function Metric({label,value}){return <div className="metric"><label>{label}</label><strong>{value}</strong><small>Live system total</small></div>}
 
 function QueueRow({ issue, onSetPriority, onAssignToMe, onSetStatus }) {
   const meta = categoryMeta(issue.category);
@@ -137,11 +129,12 @@ function QueueRow({ issue, onSetPriority, onAssignToMe, onSetStatus }) {
         <p className="text-soft" style={{ fontSize: "0.86rem", margin: "6px 0" }}>{issue.description}</p>
         <div className="text-faint" style={{ fontSize: "0.76rem", marginBottom: 10 }}>
           {issue.location?.address || `${issue.location?.coordinates?.[1]?.toFixed(4)}, ${issue.location?.coordinates?.[0]?.toFixed(4)}`}
-          {issue.mlValidation && ` · CNN confidence: ${Math.round((issue.mlValidation.confidence || 0) * 100)}% (${issue.mlValidation.mode})`}
+          {issue.mlValidation && ` · CNN confidence: ${Math.round((issue.mlValidation.confidence || 0) * 100)}%`}
           {issue.assignedTo && ` · Assigned: ${issue.assignedTo.name}`}
         </div>
 
         <div className="queue-actions">
+          <Link className="btn btn-outline btn-sm" to={`/authority/issues/${issue._id}`}>Inspect details</Link>
           <select value={issue.priority} onChange={(e) => onSetPriority(issue, e.target.value)}>
             {PRIORITY_OPTIONS.map((p) => (
               <option key={p} value={p}>{PRIORITY_LABELS[p]} priority</option>

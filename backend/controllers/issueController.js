@@ -144,6 +144,26 @@ const getMyIssues = asyncHandler(async (req, res) => {
   res.status(200).json({ count: issues.length, issues });
 });
 
+// @route GET /api/issues/dashboard
+// @desc  Compact citizen dashboard counts for the signed-in/anonymous reporter.
+const getDashboardStats = asyncHandler(async (req, res) => {
+  const [byStatus, recent] = await Promise.all([
+    Issue.aggregate([
+      { $match: { reportedBy: req.user._id } },
+      { $group: { _id: "$status", count: { $sum: 1 } } },
+    ]),
+    Issue.find({ reportedBy: req.user._id }).sort({ createdAt: -1 }).limit(4),
+  ]);
+  const statuses = Object.fromEntries(byStatus.map((entry) => [entry._id, entry.count]));
+  res.json({
+    total: Object.values(statuses).reduce((sum, count) => sum + count, 0),
+    pending: statuses.pending || 0,
+    inProgress: statuses.in_progress || 0,
+    resolved: statuses.resolved || 0,
+    recent,
+  });
+});
+
 // @route GET /api/issues/:id
 const getIssueById = asyncHandler(async (req, res) => {
   const issue = await Issue.findById(req.params.id)
@@ -185,6 +205,7 @@ module.exports = {
   getIssues,
   getNearbyIssues,
   getMyIssues,
+  getDashboardStats,
   getIssueById,
   upvoteIssue,
 };

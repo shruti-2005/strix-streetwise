@@ -35,11 +35,6 @@ export default function IssueCard({ issue, onClick, showPriority = false, footer
           <StatusBadge status={issue.status} />
           {showPriority && <PriorityBadge priority={issue.priority} />}
           {issue.isConstructionHazard && <span className="badge" style={{ background: "var(--color-hazard-tint)", color: "var(--color-hazard)" }}>⚠ Hazard</span>}
-          {issue.mlValidation?.mode === "mock" && (
-            <span className="text-faint" style={{ fontSize: "0.72rem" }} title="ML service running in demo/mock mode">
-              AI: demo mode
-            </span>
-          )}
         </div>
         {footer}
       </div>

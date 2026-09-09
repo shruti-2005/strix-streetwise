@@ -25,8 +25,8 @@ export default function MyReports() {
   }, []);
 
   return (
-    <div className="container" style={{ paddingTop: 32, paddingBottom: 48, maxWidth: 720 }}>
-      <h1 style={{ fontSize: "1.6rem", marginBottom: 4 }}>My reports</h1>
+    <main className="page" style={{maxWidth:780}}>
+      <div className="eyebrow">Citizen report history · live status tracking</div><h1 className="page-title">My reports</h1>
       <p className="text-soft" style={{ marginTop: 0, marginBottom: 20 }}>
         Track what happens after you submit a report — status updates arrive here in real time.
       </p>
@@ -45,6 +45,6 @@ export default function MyReports() {
           <IssueCard key={issue._id} issue={issue} showPriority />
         ))}
       </div>
-    </div>
+    </main>
   );
 }
